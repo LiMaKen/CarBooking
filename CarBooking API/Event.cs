@@ -1,4 +1,5 @@
 using API_Template.Database;
+using CarBooking_API;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,7 @@ var app = builder.Build();
 //Database Connection
 if (General.InitConnection() == true)
 {
+    Ulits.GetAccount();
     Console.WriteLine("[MYSQL]: OPEN!");
 }
 

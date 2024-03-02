@@ -20,33 +20,13 @@ namespace CarBooking_API.Controllers
         [HttpGet(Name = "GetAccount")]
         public List<AccountDetail> Get()
         {
-            List<AccountDetail> accounts = new List<AccountDetail>();   
-            MySqlCommand cmd = General.Connection.CreateCommand();
-            cmd.CommandText = "SELECT * FROM account";
-            using (var render = cmd.ExecuteReader())
-            {
-                while (render.Read())
-                {
-                    AccountDetail accountDetail = new AccountDetail();
-                    accountDetail.name = render.GetString("name");
-                    accountDetail.password = render.GetString("password");
-                    accountDetail.username = render.GetString("username");
-                    accounts.Add(accountDetail);    
-                }
-            }
-            return accounts;
+            return Ulits.accounts;
         }
         [HttpPost(Name = "PostAccount")]
         public IActionResult InsertAccount(AccountDetail account)
         {
             try
             {
-                var accountin = new AccountDetail()
-                {
-                    name = account.name,
-                    password = account.password,
-                    username = account.username,
-                };
                 if (Ulits.CheckAccout(account))
                 {
                     MySqlCommand cmd = General.Connection.CreateCommand();
@@ -55,6 +35,7 @@ namespace CarBooking_API.Controllers
                     cmd.Parameters.AddWithValue("@password", account.password);
                     cmd.Parameters.AddWithValue("@name", account.name);
                     cmd.ExecuteNonQuery();
+                    Ulits.accounts.Add(account);
                     return Ok(new { Sussess = true });
                 }
             }
