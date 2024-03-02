@@ -36,5 +36,36 @@ namespace CarBooking_API.Controllers
             }
             return accounts;
         }
+        [HttpPost(Name = "PostAccount")]
+        public IActionResult InsertAccount(AccountDetail account)
+        {
+            try
+            {
+                var accountin = new AccountDetail()
+                {
+                    name = account.name,
+                    password = account.password,
+                    username = account.username,
+                };
+                if (Ulits.CheckAccout(account))
+                {
+                    MySqlCommand cmd = General.Connection.CreateCommand();
+                    cmd.CommandText = "INSERT INTO account(username,password,name) VALUES (@username,@password,@name)";
+                    cmd.Parameters.AddWithValue("@username", account.username);
+                    cmd.Parameters.AddWithValue("@password", account.password);
+                    cmd.Parameters.AddWithValue("@name", account.name);
+                    cmd.ExecuteNonQuery();
+                    return Ok(new { Sussess = true });
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return StatusCode(500, $"Internal Server Error: {e.Message}");
+            }
+            return StatusCode(500, $"Internal Server Error");
+        }
+
+        
     }
 }
