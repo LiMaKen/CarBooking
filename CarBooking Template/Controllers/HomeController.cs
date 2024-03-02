@@ -1,5 +1,7 @@
 using CarBooking_Template.Models;
+using Data.Model;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Diagnostics;
 
 namespace CarBooking_Template.Controllers
@@ -13,9 +15,19 @@ namespace CarBooking_Template.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        async public Task<IActionResult> Index()
         {
-            return View();
+            HttpClient client = new HttpClient();
+            var data = await client.GetAsync("https://localhost:7088/Account");
+            var res = await data.Content.ReadAsStringAsync();
+
+            var dataJson = JsonConvert.DeserializeObject<List<AccountDetail>>(res);
+            return View(dataJson);
+        }
+
+        private string GetUserName(List<AccountDetail> accounts)
+        {
+            return "";
         }
 
         public IActionResult Privacy()
