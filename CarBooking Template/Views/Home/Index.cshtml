@@ -1,8 +1,17 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-
+@model IEnumerable<Data.Model.AccountDetail>
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    @foreach (var item in Model)
+    {
+        @if (item != null)
+        {
+             <ul>
+            <li>@item.name</li>
+         </ul>
+        }
+    }
+   
 </div>

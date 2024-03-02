@@ -21,7 +21,8 @@ namespace CarBooking_Template.Controllers
             var data = await client.GetAsync("https://localhost:7088/Account");
             var res = await data.Content.ReadAsStringAsync();
 
-            var dataJson = JsonConvert.DeserializeObject<List<AccountDetail>>(res);
+            var dataJson = JsonConvert.DeserializeObject<IEnumerable<AccountDetail>>(res);
+
             return View(dataJson);
         }
 
