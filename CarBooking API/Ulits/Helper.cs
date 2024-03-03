@@ -1,4 +1,5 @@
 ﻿using API_Template.Database;
+using CarBooking_API.Controllers;
 using Data.Model;
 using MySql.Data.MySqlClient;
 using System.Reflection.PortableExecutable;
@@ -30,22 +31,14 @@ namespace CarBooking_API.Ulits
 
         internal static bool CheckLoginAccout(AccountDetail account)
         {
-            MySqlCommand cmd = General.Connection.CreateCommand();
-            cmd.CommandText = "SELECT *  FROM account WHERE username=@username,password=@password";
-            cmd.Parameters.AddWithValue("@username", account.username);
-            using (var render = cmd.ExecuteReader())
+            foreach (var item in AccountController.accounts)
             {
-                if (render.HasRows)
+                if (account != null && item != null && account.username.CompareTo(item.username) == 0)
                 {
-                    if (render.Read())
-                    {
-                        int count = render.GetInt32(0);
-                        return count > 0 ? false : true;
-                    }
-                    render.Close();
+                    return true;
                 }
             }
-            return true;
+            return false;
         }
     }
 }

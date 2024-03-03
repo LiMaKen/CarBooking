@@ -1,4 +1,5 @@
 using API_Template.Database;
+using CarBooking_API.Controllers;
 using CarBooking_API.Ulits;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +16,7 @@ var app = builder.Build();
 //Database Connection
 if (General.InitConnection() == true)
 {
-    Helper.GetAccount();
+    AccountController.GetAllAccount();
 }
 
 // Configure the HTTP request pipeline.

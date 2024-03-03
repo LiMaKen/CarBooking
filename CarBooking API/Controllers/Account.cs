@@ -26,22 +26,36 @@ namespace CarBooking_API.Controllers
             return accounts;
         }
         [HttpPost(Name = "PostLoginAccount")]
-        public IActionResult LoginAccount(AccountDetail account)
+        public AccountDetail LoginAccount(AccountDetail account)
         {
             try
             {
-                if (!Helper.CheckLoginAccout(account)) return Ok(new { Info = "Tài khoản đã tồn tại!" });
+                if (!Helper.CheckLoginAccout(account)) return null;
                 else
                 {
-                    return Ok(new { Sussess = true });
+                    var acc = GetAccout(account);
+                    if (acc != null) return acc;
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                return StatusCode(500, $"Internal Server Error: {e.Message}");
             }
+            return null;
         }
+
+        private AccountDetail GetAccout(AccountDetail account)
+        {
+            foreach (var item in accounts)
+            {
+                if (item != null && account != null && account.username == item.username && account.password == item.password)
+                {
+                    return item;
+                }
+            }
+            return null;
+        }
+
         [HttpPost(Name = "PostRegisterAccount")]
         public IActionResult RegisterAccount(AccountDetail account)
         {
