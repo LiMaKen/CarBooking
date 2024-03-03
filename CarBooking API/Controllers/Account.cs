@@ -1,7 +1,9 @@
-using API_Template.Database;
+﻿using API_Template.Database;
+using CarBooking_API.Ulits;
 using Data.Model;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
+using Mysqlx.Notice;
 
 namespace CarBooking_API.Controllers
 {
@@ -9,6 +11,7 @@ namespace CarBooking_API.Controllers
     [Route("[controller]")]
     public class AccountController : ControllerBase
     {
+        public static List<AccountDetail> accounts = new List<AccountDetail>();
 
         private readonly ILogger<AccountController> _logger;
 
@@ -20,22 +23,16 @@ namespace CarBooking_API.Controllers
         [HttpGet(Name = "GetAccount")]
         public List<AccountDetail> Get()
         {
-            return Ulits.accounts;
+            return accounts;
         }
-        [HttpPost(Name = "PostAccount")]
-        public IActionResult InsertAccount(AccountDetail account)
+        [HttpPost(Name = "PostLoginAccount")]
+        public IActionResult LoginAccount(AccountDetail account)
         {
             try
             {
-                if (Ulits.CheckAccout(account))
+                if (!Helper.CheckLoginAccout(account)) return Ok(new { Info = "Tài khoản đã tồn tại!" });
+                else
                 {
-                    MySqlCommand cmd = General.Connection.CreateCommand();
-                    cmd.CommandText = "INSERT INTO account(username,password,name) VALUES (@username,@password,@name)";
-                    cmd.Parameters.AddWithValue("@username", account.username);
-                    cmd.Parameters.AddWithValue("@password", account.password);
-                    cmd.Parameters.AddWithValue("@name", account.name);
-                    cmd.ExecuteNonQuery();
-                    Ulits.accounts.Add(account);
                     return Ok(new { Sussess = true });
                 }
             }
@@ -44,9 +41,49 @@ namespace CarBooking_API.Controllers
                 Console.WriteLine(e.Message);
                 return StatusCode(500, $"Internal Server Error: {e.Message}");
             }
-            return StatusCode(500, $"Internal Server Error");
+        }
+        [HttpPost(Name = "PostRegisterAccount")]
+        public IActionResult RegisterAccount(AccountDetail account)
+        {
+            try
+            {
+                if (!Helper.CheckRegisterAccout(account)) return Ok(new { Info = "Tài khoản đã tồn tại!" });
+                else
+                {
+                    MySqlCommand cmd = General.Connection.CreateCommand();
+                    cmd.CommandText = "INSERT INTO account(username,password,name) VALUES (@username,@password,@name)";
+                    cmd.Parameters.AddWithValue("@username", account.username);
+                    cmd.Parameters.AddWithValue("@password", account.password);
+                    cmd.Parameters.AddWithValue("@name", account.name);
+                    cmd.ExecuteNonQuery();
+                    accounts.Add(account);
+                    return Ok(new { Sussess = true });
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return StatusCode(500, $"Internal Server Error: {e.Message}");
+            }
+        }
+       
+        public static void GetAllAccount()
+        {
+
+            MySqlCommand cmd = General.Connection.CreateCommand();
+            cmd.CommandText = "SELECT * FROM account";
+            using (var render = cmd.ExecuteReader())
+            {
+                while (render.Read())
+                {
+                    AccountDetail accountDetail = new AccountDetail();
+                    accountDetail.name = render.GetString("name");
+                    accountDetail.password = render.GetString("password");
+                    accountDetail.username = render.GetString("username");
+                    accounts.Add(accountDetail);
+                }
+            }
         }
 
-        
     }
 }

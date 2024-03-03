@@ -3,33 +3,36 @@ using Data.Model;
 using MySql.Data.MySqlClient;
 using System.Reflection.PortableExecutable;
 
-namespace CarBooking_API
+namespace CarBooking_API.Ulits
 {
-    public class Ulits
+    public class Helper
     {
-        public static List<AccountDetail> accounts = new List<AccountDetail>();
-        public static void GetAccount()
-        {
-            
-            MySqlCommand cmd = General.Connection.CreateCommand();
-            cmd.CommandText = "SELECT * FROM account";
-            using (var render = cmd.ExecuteReader())
-            {
-                while (render.Read())
-                {
-                    AccountDetail accountDetail = new AccountDetail();
-                    accountDetail.name = render.GetString("name");
-                    accountDetail.password = render.GetString("password");
-                    accountDetail.username = render.GetString("username");
-                    accounts.Add(accountDetail);
-                }
-            }
-        }
-        public static bool CheckAccout(AccountDetail account)
+       
+        public static bool CheckRegisterAccout(AccountDetail account)
         {
             MySqlCommand cmd = General.Connection.CreateCommand();
             cmd.CommandText = "SELECT COUNT(*) as count FROM account WHERE username=@username";
-            cmd.Parameters.AddWithValue("@username",account.username);
+            cmd.Parameters.AddWithValue("@username", account.username);
+            using (var render = cmd.ExecuteReader())
+            {
+                if (render.HasRows)
+                {
+                    if (render.Read())
+                    {
+                        int count = render.GetInt32(0);
+                        return count > 0 ? false : true;
+                    }
+                    render.Close();
+                }
+            }
+            return true;
+        }
+
+        internal static bool CheckLoginAccout(AccountDetail account)
+        {
+            MySqlCommand cmd = General.Connection.CreateCommand();
+            cmd.CommandText = "SELECT *  FROM account WHERE username=@username,password=@password";
+            cmd.Parameters.AddWithValue("@username", account.username);
             using (var render = cmd.ExecuteReader())
             {
                 if (render.HasRows)
