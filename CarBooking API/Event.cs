@@ -17,6 +17,7 @@ var app = builder.Build();
 if (General.InitConnection() == true)
 {
     AccountController.GetAllAccount();
+    InfoController.GetInfoUser();
 }
 
 // Configure the HTTP request pipeline.

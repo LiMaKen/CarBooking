@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="PetaPoco.Compiled" Version="6.0.677" />
   </ItemGroup>
 
   <ItemGroup>
