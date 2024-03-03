@@ -5,5 +5,11 @@ namespace Data.Model
         public string username { get; set; }
         public string password { get; set; }
         public string name { get; set; }
+        public AccountDetail()
+        {
+            username = string.Empty;
+            password = string.Empty;
+            name = string.Empty;
+        }
     }
 }

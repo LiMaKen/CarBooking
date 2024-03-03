@@ -25,7 +25,7 @@ namespace CarBooking_API.Controllers
         {
             return accounts;
         }
-        [HttpPost(Name = "PostLoginAccount")]
+        [HttpPost("PostLoginAccount")]
         public AccountDetail LoginAccount(AccountDetail account)
         {
             try
@@ -46,17 +46,24 @@ namespace CarBooking_API.Controllers
 
         private AccountDetail GetAccout(AccountDetail account)
         {
-            foreach (var item in accounts)
+            try
             {
-                if (item != null && account != null && account.username == item.username && account.password == item.password)
+                foreach (var item in accounts)
                 {
-                    return item;
+                    if (item != null && account != null && account.username == item.username && account.password == item.password)
+                    {
+                        return item;
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
             }
             return null;
         }
 
-        [HttpPost(Name = "PostRegisterAccount")]
+        [HttpPost("PostRegisterAccount")]
         public IActionResult RegisterAccount(AccountDetail account)
         {
             try
@@ -83,7 +90,6 @@ namespace CarBooking_API.Controllers
        
         public static void GetAllAccount()
         {
-
             MySqlCommand cmd = General.Connection.CreateCommand();
             cmd.CommandText = "SELECT * FROM account";
             using (var render = cmd.ExecuteReader())

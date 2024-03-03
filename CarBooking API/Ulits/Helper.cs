@@ -31,12 +31,19 @@ namespace CarBooking_API.Ulits
 
         internal static bool CheckLoginAccout(AccountDetail account)
         {
-            foreach (var item in AccountController.accounts)
+            try
             {
-                if (account != null && item != null && account.username.CompareTo(item.username) == 0)
+                foreach (var item in AccountController.accounts)
                 {
-                    return true;
+                    if (account != null && item != null && account.username.CompareTo(item.username) == 0)
+                    {
+                        return true;
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
             }
             return false;
         }
